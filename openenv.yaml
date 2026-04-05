@@ -1,0 +1,7 @@
+name: truth_guardian
+version: 0.1.0
+description: "AI-powered detection for fake news and misinformation."
+environment_class: server.truth_guardian_environment:TruthGuardianEnv
+observation_model: models:NewsObservation
+action_model: models:DetectionAction
+
