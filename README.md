@@ -26,13 +26,13 @@ tags:
 ### Key Features
 * **Behavioral DNA Scan:** Detects markers for Urgency, Financial fraud, and Fear-based social engineering.
 * **Trident-Intercept:** Intercepts sensitive numeric codes (OTPs) and traces the scammer's IP and proxy node (e.g., Sringeri Node).
-* **Active-Defense Rewards:** In this OpenEnv, agents earn rewards for successfully neutralizing threats and gathering scammer telemetry.
+* **Active-Defense Rewards:** Agents earn rewards for successfully neutralizing threats and gathering scammer telemetry.
 
 ---
 
 ## Quick Start (OpenEnv Integration)
 
-The `TruthGuardianEnv` allows agents to interact with the security shield to test defensive patterns:
+The `TruthGuardianEnv` allows agents to interact with the security shield:
 
 ```python
 from truth_guardian import TruthGuardianAction, TruthGuardianEnv
