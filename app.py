@@ -2,12 +2,10 @@ import gradio as gr
 import hashlib
 import secrets
 import random
-import time
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 # --- OPENENV BACKEND WRAPPER ---
-# This section fixes the "Method Not Allowed" / "POST Reset" error
 app = FastAPI()
 
 @app.post("/reset")
@@ -73,27 +71,16 @@ def hunter_protocol_engine(user_input):
 with gr.Blocks(theme=gr.themes.Monochrome()) as demo:
     gr.Markdown("# 🔱 Truth Guardian (VAK-∞)")
     gr.Markdown("### Node: SIT-Valachil-Main-01 | Hunter-Protocol: ACTIVE")
-    
-    with gr.Row():
-        input_text = gr.Textbox(
-            label="Message / OTP Input Field", 
-            placeholder="Paste suspicious SMS, Email, or OTP here...",
-            lines=3
-        )
-    
+    input_text = gr.Textbox(label="Message / OTP Input Field", placeholder="Paste suspicious SMS here...", lines=3)
     output_text = gr.Textbox(label="Guardian Analysis & Active-Defense Logs", lines=10)
-    
     scan_button = gr.Button("🚀 INITIALIZE HUNTER-PROTOCOL SCAN")
     scan_button.click(fn=hunter_protocol_engine, inputs=input_text, outputs=output_text)
-    
     gr.Markdown("---")
     gr.Markdown("🏁 Built for Meta PyTorch OpenEnv Hackathon | Team Vakratunda")
 
 # --- MOUNT GRADIO TO FASTAPI ---
-# This ensures both the UI and the automated endpoints work on port 8000
-app = gr.mount_gradio_app(app, demo, path="/web")
+app = gr.mount_gradio_app(app, demo, path="/")
 
 if __name__ == "__main__":
     import uvicorn
-    # Important: OpenEnv looks for the server on port 8000
     uvicorn.run(app, host="0.0.0.0", port=8000)
