@@ -21,18 +21,18 @@ tags:
 > 🚀 **Live App:** [Hugging Face Space](https://huggingface.co/spaces/Akash154/Truth-Guardian-VAK)
 
 ## Project Overview
-**Truth Guardian (VAK-∞)** is an active-defense environment built for the **Meta PyTorch OpenEnv Hackathon**. Unlike passive blockers, this system utilizes a **Behavioral DNA Scan** to identify fraud intent and a **Hunter-Protocol** to trace scammer sources. 
+**Truth Guardian (VAK-∞)** is an active-defense environment built for the **Meta PyTorch OpenEnv Hackathon**. Instead of just blocking spam, this system uses **Behavioral DNA Scanning** and a **Hunter-Protocol** to trace scammer sources and neutralize threats.
 
 ### Key Features
-* **Behavioral DNA Scan:** Detects markers for Urgency, Financial fraud, and Fear-based social engineering.
-* **Trident-Intercept:** Intercepts sensitive numeric codes (OTPs) and traces the scammer's IP and proxy node (e.g., Sringeri Node).
-* **Active-Defense Rewards:** Agents earn rewards for successfully neutralizing threats and gathering scammer telemetry.
+* **Behavioral DNA Scan:** Analyzes intent to flag markers for Urgency, Financial fraud, and Social Engineering.
+* **Trident-Intercept:** Specialized trap for sensitive OTPs that traces the scammer's IP and proxy node (e.g., Sringeri Node).
+* **Active-Defense Rewards:** Agents in this environment earn rewards for successfully neutralizing deceptive interactions.
 
 ---
 
 ## Quick Start (OpenEnv Integration)
 
-The `TruthGuardianEnv` allows agents to interact with the security shield:
+Interact with the security shield using the `TruthGuardianEnv` class:
 
 ```python
 from truth_guardian import TruthGuardianAction, TruthGuardianEnv
@@ -44,13 +44,11 @@ try:
     # Reset the security session
     result = env.reset()
     
-    # Test a suspicious message (Social Engineering Attack)
-    test_msg = "URGENT: Your bank account is locked. Click here: [http://bit.ly/scam](http://bit.ly/scam)"
+    # Test a suspicious message
+    test_msg = "URGENT: Your account is locked. Verify here: [http://bit.ly/scam](http://bit.ly/scam)"
     result = env.step(TruthGuardianAction(message=test_msg))
     
     print(f"Status: {result.observation.status}")
     print(f"DNA Flags: {result.observation.dna_markers}")
-    print(f"Reward for Neutralization: {result.reward}")
-
 finally:
     env.close()
