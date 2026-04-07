@@ -1,10 +1,13 @@
 FROM python:3.10
 
-WORKDIR /code
+WORKDIR /app
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
+EXPOSE 7860
+
+ENTRYPOINT ["python", "-m", "uvicorn"]
+CMD ["app:app", "--host", "0.0.0.0", "--port", "7860"]
