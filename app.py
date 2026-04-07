@@ -60,8 +60,4 @@ gr.mount_gradio_app(app, demo, path="/web")
 async def root_get():
     return {"status": "VAK-∞ ACTIVE", "api": "running", "ui": "/web"}
 
-# --- 7. START SERVER ---
-if __name__ == "__main__":
-    # Standard Port 8000 for OpenEnv
-    uvicorn.run(app, host="0.0.0.0", port=8000, proxy_headers=True, forwarded_allow_ips="*")
-
+app = app
