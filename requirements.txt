@@ -1,4 +1,4 @@
-gradio
 fastapi
 uvicorn[standard]
+gradio==4.44.0
 python-multipart
