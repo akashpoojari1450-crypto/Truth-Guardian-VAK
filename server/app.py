@@ -1,4 +1,8 @@
 import sys
+import os
+# Tells Python to look one folder up for models.py
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import sys
 import hashlib
 import secrets
 import gradio as gr
