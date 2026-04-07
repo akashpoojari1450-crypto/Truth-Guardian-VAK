@@ -1,14 +1,15 @@
 import sys
 import os
-# Tells Python to look one folder up for models.py
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import sys
+
+from models import NewsObservation, DetectionAction
+
 import hashlib
 import secrets
 import gradio as gr
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from models import NewsObservation, DetectionAction
+
 from server.blank_cloud import verify_with_bank_hq
 
 # --- 1. FASTAPI INIT ---
