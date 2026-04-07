@@ -5,12 +5,15 @@ RUN useradd -m -u 1000 user
 USER user
 
 # 2. THE FIX: Explicitly set PYTHONPATH so it can find 'models.py' and 'server' folder
+# ... (rest of your Dockerfile) ...
+
 ENV HOME=/home/user \
     PATH=/home/user/.local/bin:$PATH \
-    PYTHONPATH=/home/user/app:/home/user/app/server
+    PYTHONPATH=/home/user/app \
+    PYTHONUNBUFFERED=1
 
 WORKDIR $HOME/app
-
+# ... (rest of your Dockerfile) ...
 # 3. Install dependencies
 COPY --chown=user requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
