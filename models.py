@@ -1,7 +1,13 @@
 from pydantic import BaseModel
+from typing import Optional, Dict
 
 class NewsObservation(BaseModel):
-    news_text: str
+    echoed_message: str
+    message_length: int
+    done: bool
+    reward: Optional[float] = None
+    metadata: Dict = {}
 
 class DetectionAction(BaseModel):
-    label: str
+    message: str
+    label: Optional[str] = None # Added label for the Environment class
