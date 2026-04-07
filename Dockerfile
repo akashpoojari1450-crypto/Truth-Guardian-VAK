@@ -16,4 +16,4 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 COPY --chown=user . .
 
 # IMPORTANT: Launch directly using python
-CMD ["python", "app.py"]
+CMD ["python3", "-m", "uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "7860"]
