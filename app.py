@@ -1,15 +1,28 @@
-from fastapi import FastAPI
+import gradio as gr
 
-app = FastAPI()
+def hunter_engine(user_input):
+    if not user_input:
+        return "Ready..."
+    return "Verified"
 
-@app.api_route("/reset", methods=["GET", "POST"])
-async def reset():
-    return {"status": "reset ok"}
+def reset():
+    return "reset done"
 
-@app.api_route("/step", methods=["GET", "POST"])
-async def step():
-    return {"status": "step ok"}
+def step():
+    return "step done"
 
-@app.api_route("/", methods=["GET", "POST"])
-async def root():
-    return {"status": "ok"}
+with gr.Blocks() as demo:
+    gr.Markdown("# Hunter Engine")
+
+    inp = gr.Textbox(label="Input")
+    out = gr.Textbox(label="Output")
+
+    btn1 = gr.Button("Run")
+    btn2 = gr.Button("Reset")
+    btn3 = gr.Button("Step")
+
+    btn1.click(hunter_engine, inp, out)
+    btn2.click(lambda: "reset done", None, out)
+    btn3.click(lambda: "step done", None, out)
+
+demo.launch()
