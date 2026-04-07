@@ -1,24 +1,23 @@
 FROM python:3.10
 
-# Set up user permissions
+# 1. Set up user permissions
 RUN useradd -m -u 1000 user
 USER user
+
+# 2. THE FIX: Explicitly set PYTHONPATH so it can find 'models.py' and 'server' folder
 ENV HOME=/home/user \
     PATH=/home/user/.local/bin:$PATH \
-    PYTHONPATH=$HOME/app:$HOME/app/server
+    PYTHONPATH=/home/user/app:/home/user/app/server
 
 WORKDIR $HOME/app
 
-# Install dependencies first (for faster builds)
+# 3. Install dependencies
 COPY --chown=user requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
 
-# Copy all code
+# 4. Copy all project files
 COPY --chown=user . .
 
-# 🔱 CRITICAL FIX: Ensure the server folder is readable and executable
-RUN chmod -R 755 $HOME/app/server
-
-# Match the entry point to your folder structure
-# We use 'server.app:app' because app.py is INSIDE the server folder
+# 5. Final Launch Command
+# Points to 'app' object inside 'server/app.py'
 CMD ["python3", "-m", "uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "7860"]
