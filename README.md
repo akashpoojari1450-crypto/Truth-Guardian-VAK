@@ -1,6 +1,6 @@
 ```markdown
 ---
-title: Truth Guardian (VAK-∞)
+title: Truth Guardian VAK
 emoji: 🛡️
 colorFrom: blue
 colorTo: gold
