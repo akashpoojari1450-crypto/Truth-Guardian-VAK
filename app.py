@@ -2,11 +2,9 @@
 import gradio as gr
 import hashlib
 import secrets
-import os
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
 
 # --- 1. FASTAPI INIT ---
 app = FastAPI()
@@ -18,9 +16,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- 2. OPENENV REQUIRED ENDPOINTS (FIXED) ---
+# --- 2. OPENENV REQUIRED ENDPOINTS ---
 
-# RESET (GET + POST separately to avoid "Method Not Allowed")
 @app.get("/reset")
 async def reset_get():
     return {"status": "environment reset", "message": "VAK-∞ Shield Active"}
@@ -29,7 +26,6 @@ async def reset_get():
 async def reset_post():
     return {"status": "environment reset", "message": "VAK-∞ Shield Active"}
 
-# STEP (GET + POST separately)
 @app.get("/step")
 async def step_get():
     return {"status": "step successful"}
@@ -38,12 +34,10 @@ async def step_get():
 async def step_post():
     return {"status": "step successful"}
 
-# HEALTH CHECK
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "node": "SIT-Valachil-Main-01"}
 
-# ROOT (IMPORTANT: MUST RETURN JSON)
 @app.get("/", response_class=JSONResponse)
 async def root():
     return {"status": "VAK-∞ ACTIVE", "api": "running", "ui": "/web"}
@@ -87,4 +81,4 @@ with gr.Blocks(theme=gr.themes.Monochrome()) as demo:
 
 # --- 5. MOUNT GRADIO ---
 app = gr.mount_gradio_app(app, demo, path="/web")
-
+```
