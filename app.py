@@ -5,12 +5,6 @@ def hunter_engine(user_input):
         return "Ready..."
     return "Verified"
 
-def reset():
-    return "reset done"
-
-def step():
-    return "step done"
-
 with gr.Blocks() as demo:
     gr.Markdown("# Hunter Engine")
 
