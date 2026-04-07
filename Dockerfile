@@ -1,22 +1,19 @@
-# Keep your current Python version
 FROM python:3.10
 
-# 1. Create a non-root user (Hugging Face standard)
+# Set up user permissions (prevents the 'root' error)
 RUN useradd -m -u 1000 user
 USER user
 ENV HOME=/home/user \
     PATH=/home/user/.local/bin:$PATH
 
-# 2. Set the working directory to the user's home
 WORKDIR $HOME/app
 
-# 3. Copy requirements and install as the 'user'
-# This avoids the "Running as root" warning
+# Install dependencies
 COPY --chown=user requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
 
-# 4. Copy the rest of your application code
+# Copy app code
 COPY --chown=user . .
 
-# 5. Run the app on the standard port
-CMD ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
+# IMPORTANT: Launch directly using python
+CMD ["python", "app.py"]
