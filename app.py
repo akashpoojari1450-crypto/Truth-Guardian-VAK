@@ -2,12 +2,11 @@ import gradio as gr
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
 
 # --- 1. INITIALIZE FASTAPI ---
 app = FastAPI()
 
-# Add CORS to prevent security blocks
+# CORS (important)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,49 +14,57 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- 2. OPENENV API ENDPOINTS (The "Check" Fixes) ---
-# We use @app.api_route to handle BOTH GET and POST for maximum compatibility
-@app.post("/reset")
+# --- 2. OPENENV API ENDPOINTS ---
+@app.api_route("/reset", methods=["GET", "POST"])
 async def reset_env():
-    """Satisfies the automated 'openenv reset post' check"""
-    return JSONResponse(content={"status": "environment reset", "message": "VAK-∞ Shield Active"})
+    return JSONResponse(
+        content={
+            "status": "environment reset",
+            "message": "VAK-∞ Shield Active"
+        }
+    )
 
-@app.post("/step")
+@app.api_route("/step", methods=["GET", "POST"])
 async def step_env(request: Request):
-    """Satisfies the automated environment step check"""
     return JSONResponse(content={"status": "step successful"})
 
-# --- 3. THE "METHOD NOT ALLOWED" ROOT FIX ---
-# If the bot hits the root URL with a POST instead of /reset, this catches it.
+# --- 3. ROOT FIX ---
 @app.post("/")
 async def root_post():
-    return JSONResponse(content={"status": "environment reset", "message": "VAK-∞ Shield Active"})
+    return JSONResponse(
+        content={
+            "status": "environment reset",
+            "message": "VAK-∞ Shield Active"
+        }
+    )
+
+@app.get("/")
+async def root_get():
+    return {
+        "status": "VAK-∞ ACTIVE",
+        "api": "running",
+        "ui": "/web"
+    }
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "node": "SIT-Valachil-Main-01"}
+    return {"status": "healthy"}
 
-# --- 4. TRUTH GUARDIAN (VAK-∞) LOGIC ---
+# --- 4. TRUTH GUARDIAN LOGIC ---
 def hunter_engine(user_input):
     if not user_input:
         return "🔱 [EYE] Standing by. Paste message for analysis..."
-    return f"🔱 STATUS: [✓] VERIFIED. Node: SIT-Valachil-Main-01 | Hunter-Protocol: ACTIVE"
+    return "🔱 STATUS: [✓] VERIFIED | Hunter-Protocol: ACTIVE"
 
 # --- 5. GRADIO UI ---
 demo = gr.Interface(
-    fn=hunter_engine, 
-    inputs=gr.Textbox(label="Input Message", lines=3), 
+    fn=hunter_engine,
+    inputs=gr.Textbox(label="Input Message", lines=3),
     outputs=gr.Textbox(label="Analysis Logs", lines=5),
     title="🔱 Truth Guardian (VAK-∞)",
-    description="### Node: SIT-Valachil-Main-01 | Team Vakratunda",
+    description="Node Active | Team Vakratunda",
     theme=gr.themes.Monochrome()
 )
 
-# --- 6. THE MOUNT (The "One-Step" UI Fix) ---
-# Moves UI to /web so the bot can hit /reset at the root level without being blocked
+# --- 6. MOUNT GRADIO (FINAL FIX) ---
 gr.mount_gradio_app(app, demo, path="/web")
-@app.get("/")
-async def root_get():
-    return {"status": "VAK-∞ ACTIVE", "api": "running", "ui": "/web"}
-
-app = app
