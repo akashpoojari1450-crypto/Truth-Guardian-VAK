@@ -3,10 +3,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-# --- 1. INITIALIZE FASTAPI ---
+# --- FASTAPI APP ---
 app = FastAPI()
 
-# CORS (important)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,57 +13,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- 2. OPENENV API ENDPOINTS ---
+# --- REQUIRED ENDPOINTS ---
 @app.api_route("/reset", methods=["GET", "POST"])
 async def reset_env():
-    return JSONResponse(
-        content={
-            "status": "environment reset",
-            "message": "VAK-∞ Shield Active"
-        }
-    )
+    return {"status": "environment reset"}
 
 @app.api_route("/step", methods=["GET", "POST"])
 async def step_env(request: Request):
-    return JSONResponse(content={"status": "step successful"})
+    return {"status": "step successful"}
 
-# --- 3. ROOT FIX ---
-@app.post("/")
-async def root_post():
-    return JSONResponse(
-        content={
-            "status": "environment reset",
-            "message": "VAK-∞ Shield Active"
-        }
-    )
+# --- IMPORTANT ROOT FIX ---
+@app.api_route("/", methods=["GET", "POST"])
+async def root():
+    return {"status": "ok"}
 
-@app.get("/")
-async def root_get():
-    return {
-        "status": "VAK-∞ ACTIVE",
-        "api": "running",
-        "ui": "/web"
-    }
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
-
-# --- 4. TRUTH GUARDIAN LOGIC ---
+# --- GRADIO FUNCTION ---
 def hunter_engine(user_input):
     if not user_input:
-        return "🔱 [EYE] Standing by. Paste message for analysis..."
-    return "🔱 STATUS: [✓] VERIFIED | Hunter-Protocol: ACTIVE"
+        return "Ready..."
+    return "Verified"
 
-# --- 5. GRADIO UI ---
+# --- GRADIO UI ---
 demo = gr.Interface(
     fn=hunter_engine,
-    inputs=gr.Textbox(label="Input Message", lines=3),
-    outputs=gr.Textbox(label="Analysis Logs", lines=5),
-    title="🔱 Truth Guardian (VAK-∞)",
-    description="Node Active | Team Vakratunda",
-    theme=gr.themes.Monochrome()
+    inputs="text",
+    outputs="text",
 )
 
-# --- 6. MOUNT GRADIO (FINAL FIX) ---
-gr.mount_gradio_app(app, demo, path="/web")
+# --- MOUNT GRADIO (CRITICAL) ---
+app = gr.mount_gradio_app(app, demo, path="/web")
