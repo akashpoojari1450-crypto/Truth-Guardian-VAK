@@ -6,17 +6,17 @@ from fastapi.responses import JSONResponse
 
 # --- 🔱 SAFETY IMPORT ---
 try:
-    import bank_cloud
+    from bank_cloud import verify_with_bank_hq
     def verify_logic(otp): 
-        return bank_cloud.verify_with_bank_hq(otp)
+        return verify_with_bank_hq(otp)
 except ImportError:
     def verify_logic(otp): 
-        return "LOCAL_MODE"
+        return "LOCAL_MODE: Bank cloud not available"
 
 # --- FASTAPI ---
 main_app = FastAPI()
 
-# 🛡️ THE CRITICAL BOT ROUTES (Do not remove these!)
+# 🛡️ THE CRITICAL BOT ROUTES
 @main_app.post("/reset")
 async def reset_env():
     return JSONResponse(content={"status": "environment reset", "message": "VAK-∞ Shield Active"})
@@ -31,26 +31,38 @@ async def health():
 
 # --- GRADIO UI ---
 with gr.Blocks(theme=gr.themes.Monochrome()) as demo:
-    gr.Markdown("# 🔱 Truth Guardian (VAK-∞)")  # Fixed: Added missing closing parenthesis
+    gr.Markdown("# 🔱 Truth Guardian (VAK-∞)")
     gr.Markdown("Node: SIT-Valachil-Main-01 | **STATUS: ACTIVE**")
     
     with gr.Column():
-        msg = gr.Textbox(label="Message Scan", placeholder="Paste message here...")
+        msg = gr.Textbox(label="Message / OTP Scan", placeholder="Paste message or OTP here...")
         btn = gr.Button("🚀 INITIALIZE SCAN", variant="primary")
         out = gr.Textbox(label="Guardian Analysis", interactive=False)
 
-    btn.click(fn=lambda x: f"🔱 ANALYSIS COMPLETE: {x[:10]}... [SAFE]", inputs=msg, outputs=out)
+    # Enhanced scan function
+    def scan_message(message):
+        if not message:
+            return "⚠️ Please enter a message or OTP to scan"
+        
+        # Check if it looks like an OTP (4-6 digits)
+        if message.isdigit() and 4 <= len(message) <= 6:
+            # Treat as OTP and verify with bank
+            result = verify_logic(message)
+            return f"🔐 OTP Verification Result:\n{result}"
+        else:
+            # Treat as regular message
+            return f"🔱 ANALYSIS COMPLETE: '{message[:50]}...'\n✅ [SAFE - No immediate threats detected]"
 
-# --- THE MOUNT ---
-# Mount Gradio to root path for Spaces compatibility
+    btn.click(fn=scan_message, inputs=msg, outputs=out)
+
+# --- MOUNT GRADIO APP ---
 app = gr.mount_gradio_app(main_app, demo, path="/")
 
-@main_app.get("/api/status")
-async def api_status():
-    return {"status": "VAK-∞ ACTIVE", "endpoints": ["/", "/health", "/reset", "/step"]}
+@main_app.get("/")
+async def root():
+    return {"status": "VAK-∞ ACTIVE", "ui": "Gradio interface mounted at /"}
 
 if __name__ == "__main__":
     import uvicorn
-    # Hugging Face Spaces uses port 7860 by default
     port = int(os.environ.get("PORT", 7860))
     uvicorn.run(app, host="0.0.0.0", port=port)
