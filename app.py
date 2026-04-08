@@ -6,37 +6,18 @@ import gradio as gr
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# --- 🔱 THE CRITICAL PATH FIX (SIT-Valachil) ---
-# This block allows app.py to see models.py in the root folder.
-# Without this, the app crashes instantly with 'ModuleNotFoundError'.
-current_dir = os.path.dirname(os.path.abspath(__file__))
-root_dir = os.path.dirname(current_dir)
-sys.path.insert(0, root_dir)
-sys.path.insert(0, current_dir)
+# 1. Add current directory to path to ensure it finds models.py
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# --- 🔱 IMPORTS ---
-try:
-    from models import NewsObservation, DetectionAction
-except ImportError:
-    # Manual fallback for robustness
-    from pydantic import BaseModel
-    from typing import Optional, Dict
-    class NewsObservation(BaseModel):
-        echoed_message: str
-        message_length: int
-        done: bool = False
-    class DetectionAction(BaseModel):
-        message: str
-        label: Optional[str] = "FAKE"
+# 2. Imports - Note we point to the server folder for bank_cloud
+from models import NewsObservation, DetectionAction
+from server.bank_cloud import verify_with_bank_hq
 
-# Import from the same folder (server/bank_cloud.py)
-from .bank_cloud import verify_with_bank_hq
-
-# --- 1. FASTAPI INIT ---
+# --- FASTAPI INIT ---
 main_app = FastAPI()
 main_app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-# --- 2. CORE ENGINE ---
+# --- CORE ENGINE ---
 def hunter_protocol_engine(user_input):
     if not user_input or not user_input.strip():
         return "🔱 [EYE] Standing by. Paste message for DNA analysis..."
@@ -51,7 +32,7 @@ def hunter_protocol_engine(user_input):
         return f"{header}🔱 STATUS: [!] FRAUD DNA DETECTED\n🔱 ACTION: NEUTRALIZED BY {token}"
     return f"{header}🔱 STATUS: [✓] VERIFIED REAL. NO DECEPTION DETECTED."
 
-# --- 3. API ENDPOINTS (OpenEnv Compliance) ---
+# --- API ENDPOINTS (OpenEnv Compliance) ---
 @main_app.get("/health")
 async def health(): return {"status": "healthy", "node": "SIT-Valachil-Main-01"}
 
@@ -80,7 +61,7 @@ async def step(action: DetectionAction):
         "done": False
     }
 
-# --- 4. GRADIO UI ---
+# --- GRADIO UI ---
 with gr.Blocks(theme=gr.themes.Monochrome(), title="Truth Guardian (VAK-∞)") as demo:
     gr.Markdown("# 🔱 Truth Guardian (VAK-∞)")
     gr.Markdown("Node: SIT-Valachil-Main-01 | Hunter-Protocol: **ACTIVE**")
@@ -97,8 +78,7 @@ with gr.Blocks(theme=gr.themes.Monochrome(), title="Truth Guardian (VAK-∞)") a
     run_btn.click(fn=hunter_protocol_engine, inputs=input_text, outputs=output_text)
     clear_btn.click(lambda: [None, None], outputs=[input_text, output_text])
 
-# --- 5. MOUNT & EXPOSE ---
-# The variable 'app' is what uvicorn server.app:app looks for
+# --- MOUNT & EXPOSE ---
 app = gr.mount_gradio_app(main_app, demo, path="/web")
 
 if __name__ == "__main__":
