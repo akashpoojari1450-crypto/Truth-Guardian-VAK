@@ -12,4 +12,5 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 COPY --chown=user . .
 
 # Launch the app from the root
+# 🔱 Pointing directly to the Root app.py
 CMD ["python3", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
