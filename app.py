@@ -6,18 +6,25 @@ import gradio as gr
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# 1. Add current directory to path to ensure it finds models.py
+# --- 🔱 CRITICAL PATH FIX ---
+# This ensures the root app can see models.py and the server/ folder
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# 2. Imports - Note we point to the server folder for bank_cloud
-from models import NewsObservation, DetectionAction# 🔱 Look inside the server folder specifically for the cloud logic
-from server.bank_cloud import verify_with_bank_hq
+# --- 🔱 IMPORTS ---
+from models import NewsObservation, DetectionAction
 
-# --- FASTAPI INIT ---
+# Points to your server/bank_cloud.py file
+try:
+    from server.bank_cloud import verify_with_bank_hq
+except ImportError:
+    # Backup if the folder structure is strict
+    def verify_with_bank_hq(otp): return "CLOUD_OFFLINE"
+
+# --- 1. FASTAPI INIT ---
 main_app = FastAPI()
 main_app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-# --- CORE ENGINE ---
+# --- 2. CORE ENGINE ---
 def hunter_protocol_engine(user_input):
     if not user_input or not user_input.strip():
         return "🔱 [EYE] Standing by. Paste message for DNA analysis..."
@@ -32,7 +39,7 @@ def hunter_protocol_engine(user_input):
         return f"{header}🔱 STATUS: [!] FRAUD DNA DETECTED\n🔱 ACTION: NEUTRALIZED BY {token}"
     return f"{header}🔱 STATUS: [✓] VERIFIED REAL. NO DECEPTION DETECTED."
 
-# --- API ENDPOINTS (OpenEnv Compliance) ---
+# --- 3. API ENDPOINTS (OpenEnv Compliance) ---
 @main_app.get("/health")
 async def health(): return {"status": "healthy", "node": "SIT-Valachil-Main-01"}
 
@@ -61,7 +68,7 @@ async def step(action: DetectionAction):
         "done": False
     }
 
-# --- GRADIO UI ---
+# --- 4. GRADIO UI ---
 with gr.Blocks(theme=gr.themes.Monochrome(), title="Truth Guardian (VAK-∞)") as demo:
     gr.Markdown("# 🔱 Truth Guardian (VAK-∞)")
     gr.Markdown("Node: SIT-Valachil-Main-01 | Hunter-Protocol: **ACTIVE**")
@@ -78,7 +85,7 @@ with gr.Blocks(theme=gr.themes.Monochrome(), title="Truth Guardian (VAK-∞)") a
     run_btn.click(fn=hunter_protocol_engine, inputs=input_text, outputs=output_text)
     clear_btn.click(lambda: [None, None], outputs=[input_text, output_text])
 
-# --- MOUNT & EXPOSE ---
+# --- 5. MOUNT ---
 app = gr.mount_gradio_app(main_app, demo, path="/web")
 
 if __name__ == "__main__":
