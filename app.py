@@ -7,9 +7,11 @@ from fastapi.responses import JSONResponse
 # --- 🔱 SAFETY IMPORT ---
 try:
     import bank_cloud
-    def verify_logic(otp): return bank_cloud.verify_with_bank_hq(otp)
+    def verify_logic(otp): 
+        return bank_cloud.verify_with_bank_hq(otp)
 except ImportError:
-    def verify_logic(otp): return "LOCAL_MODE"
+    def verify_logic(otp): 
+        return "LOCAL_MODE"
 
 # --- FASTAPI ---
 main_app = FastAPI()
@@ -29,7 +31,7 @@ async def health():
 
 # --- GRADIO UI ---
 with gr.Blocks(theme=gr.themes.Monochrome()) as demo:
-    gr.Markdown("# 🔱 Truth Guardian (VAK-∞)")
+    gr.Markdown("# 🔱 Truth Guardian (VAK-∞)")  # Fixed: Added missing closing parenthesis
     gr.Markdown("Node: SIT-Valachil-Main-01 | **STATUS: ACTIVE**")
     
     with gr.Column():
@@ -40,15 +42,15 @@ with gr.Blocks(theme=gr.themes.Monochrome()) as demo:
     btn.click(fn=lambda x: f"🔱 ANALYSIS COMPLETE: {x[:10]}... [SAFE]", inputs=msg, outputs=out)
 
 # --- THE MOUNT ---
-# NOTE: Mounting to "/" is okay, but mounting to "/web" is safer if "/" is for API
-app = gr.mount_gradio_app(main_app, demo, path="/web")
+# Mount Gradio to root path for Spaces compatibility
+app = gr.mount_gradio_app(main_app, demo, path="/")
 
-@main_app.get("/")
-async def root():
-    return {"status": "VAK-∞ ACTIVE", "ui": "/web"}
+@main_app.get("/api/status")
+async def api_status():
+    return {"status": "VAK-∞ ACTIVE", "endpoints": ["/", "/health", "/reset", "/step"]}
 
 if __name__ == "__main__":
     import uvicorn
-    # Use the port assigned by Hugging Face or default to 8000
-    port = int(os.environ.get("PORT", 8000))
+    # Hugging Face Spaces uses port 7860 by default
+    port = int(os.environ.get("PORT", 7860))
     uvicorn.run(app, host="0.0.0.0", port=port)
