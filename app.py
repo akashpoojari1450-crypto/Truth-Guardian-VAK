@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # 2. Imports - Note we point to the server folder for bank_cloud
-from models import NewsObservation, DetectionAction
+from models import NewsObservation, DetectionAction# 🔱 Look inside the server folder specifically for the cloud logic
 from server.bank_cloud import verify_with_bank_hq
 
 # --- FASTAPI INIT ---
