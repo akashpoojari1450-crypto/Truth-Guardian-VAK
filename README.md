@@ -1,9 +1,8 @@
-```markdown
 ---
 title: Truth Guardian VAK
-emoji: 🛡️
+emoji: 🔱
 colorFrom: blue
-colorTo: gold
+colorTo: red
 sdk: docker
 app_port: 7860
 pinned: false
@@ -15,43 +14,23 @@ tags:
 # 🔱 Truth Guardian (VAK-∞)
 ### Team Vakratunda | SIT Valachil Node
 
-🚀 **[WATCH DEMO VIDEO](https://youtu.be/eyrkVPflfLI)** | **[LIVE APP](https://huggingface.co/spaces/Akash154/Truth-Guardian-VAK)**
+A scam detection and OTP verification system for the Meta PyTorch OpenEnv Hackathon.
 
----
+## Features
+- OTP Verification with Bank HQ Simulation
+- Behavioral DNA Scanning
+- Scam Detection via Keyword Heuristics
+- FastAPI Endpoints for OpenEnv
+- Gradio UI Interface
 
-## 🛡️ Project Overview
-An active-defense environment for the Meta PyTorch OpenEnv Hackathon using **Behavioral DNA Scanning** and the **Hunter-Protocol**.
+## API Endpoints
+- `/reset` - Reset environment
+- `/step` - Step execution  
+- `/health` - Health check
+- `/` - API status
 
----
-
-## ⚙️ System Features
-- 🔍 Behavioral DNA hashing using BLAKE2b
-- 🚨 Scam detection via keyword heuristics
-- 🔗 FastAPI endpoints for OpenEnv compatibility
-- 🌐 Gradio UI for interactive analysis
-- 🛡️ VAK-∞ Shield response system
-
----
-
-## 🔌 API Endpoints
-
-| Endpoint | Method | Description |
-|--------|--------|------------|
-| `/reset` | GET/POST | Reset environment |
-| `/step` | GET/POST | Step execution |
-| `/health` | GET | Health check |
-| `/` | GET | API status |
-| `/web` | GET | Gradio UI |
-
----
-
-## 🚀 Deployment Info
-- Platform: Hugging Face Spaces (Docker)
-- Port: 7860
-- Entry: `uvicorn app:app`
-
----
-
-## 🏁 Submission
-Official submission for **SIT Valachil – Team Vakratunda**
+## Local Development
+```bash
+pip install -r requirements.txt
+python app.py
 ```
