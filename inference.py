@@ -13,7 +13,7 @@ if not HF_TOKEN:
 # 2. Initialize OpenAI Client (OpenEnv Requirement)
 client = OpenAI(
     base_url=API_BASE_URL,
-    api_key=HF_TOKEN
+    api_key=HF_TOKEN,
 )
 
 def run_task():
