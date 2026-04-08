@@ -12,8 +12,7 @@ from openenv.core import EnvClient
 from openenv.core.client_types import StepResult
 from openenv.core.env_server.types import State
 
-from .models import TruthGuardianAction, TruthGuardianObservation
-
+from models import DetectionAction, NewsObservation
 
 class TruthGuardianEnv(
     EnvClient[TruthGuardianAction, TruthGuardianObservation, State]
